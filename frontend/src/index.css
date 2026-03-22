@@ -1,32 +1,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Color Palette - Premium Navy & Indigo Theme */
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
-  --primary-light: #e0e7ff;
-  --secondary: #0ea5e9;
-  --accent: #f59e0b;
-  
-  --bg-main: #f8fafc;
-  --bg-card: #ffffff;
-  --bg-glass: rgba(255, 255, 255, 0.7);
-  
-  --text-main: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
-  
-  --border: #e2e8f0;
+  /* Color Palette - Premium Dark Emerald & Slate Theme */
+  --primary: #10b981;
+  --primary-hover: #34d399;
+  --primary-light: rgba(16, 185, 129, 0.15);
+  --secondary: #2dd4bf;
+  --accent: #fbbf24;
+
+  --bg-main: #022c22;
+  --bg-card: #064e3b;
+  --bg-glass: rgba(6, 78, 59, 0.6);
+
+  --text-main: #ecfdf5;
+  --text-secondary: #d1fae5;
+  --text-muted: #9ca3af;
+
+  --border: #134e4a;
   --success: #10b981;
   --warning: #f59e0b;
   --danger: #ef4444;
-  
+
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-  
+
   /* Animations */
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -49,7 +49,12 @@ body {
   line-height: 1.5;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Outfit', sans-serif;
   font-weight: 700;
   color: var(--text-main);
@@ -61,7 +66,9 @@ button {
   transition: var(--transition);
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   font-family: inherit;
   transition: var(--transition);
 }
