@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { UserRole } from '../types/auth';
+import { ROLE_WELCOME_MESSAGES, APP_NAME } from '../constants';
 import Header from './common/Header';
 import WelcomeCard from './common/WelcomeCard';
 
@@ -20,17 +21,7 @@ const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
 
   const getWelcomeMessage = () => {
-    const messages: Record<string, string> = {
-      [UserRole.STUDENT]: 'Manage your clearance requests and track progress',
-      [UserRole.SUB_ORGANIZATION]: 'Organization Clearance Management & Approvals',
-      [UserRole.MOTHER_ORGANIZATION]: 'Monitor and manage department-wide clearances',
-      [UserRole.ADVISER]: 'Review and approve student clearance forms',
-      [UserRole.NCSSC]: 'Strategic Student Services Oversight',
-      [UserRole.CLINIC]: 'Medical Clearance Administration',
-      [UserRole.SAS]: 'Student Affairs & Services Portal',
-      [UserRole.ADMIN]: 'System-wide configuration and user oversight'
-    };
-    return messages[user?.role || ''] || 'Welcome to Paperless Clearance';
+    return ROLE_WELCOME_MESSAGES[user?.role || ''] || `Welcome to ${APP_NAME}`;
   };
 
   const renderRoleDashboard = () => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { UserRole } from '../types/auth';
+import { useAuth } from '../../context/AuthContext';
+import { UserRole } from '../../types/auth';
 import './Login.css';
 
 const Login: React.FC = () => {

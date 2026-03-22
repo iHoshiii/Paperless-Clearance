@@ -1,5 +1,6 @@
 import React from 'react';
 import { User, UserRole } from '../../types/auth';
+import { ROLE_DISPLAY_NAMES } from '../../constants';
 import './Header.css';
 
 interface HeaderProps {
@@ -10,17 +11,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ user, logout, welcomeMessage }) => {
     const getRoleDisplayName = (role: UserRole | string) => {
-        const roleNames: Record<string, string> = {
-            [UserRole.STUDENT]: 'Student',
-            [UserRole.SUB_ORGANIZATION]: 'Sub-Organization',
-            [UserRole.MOTHER_ORGANIZATION]: 'Mother Organization',
-            [UserRole.ADVISER]: 'Adviser',
-            [UserRole.NCSSC]: 'NCSSC',
-            [UserRole.CLINIC]: 'Clinic',
-            [UserRole.SAS]: 'SAS',
-            [UserRole.ADMIN]: 'Administrator'
-        };
-        return roleNames[role] || role;
+        return ROLE_DISPLAY_NAMES[role as UserRole] || role;
     };
 
     return (
