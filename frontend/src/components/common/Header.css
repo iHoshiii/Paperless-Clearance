@@ -79,14 +79,39 @@
 }
 
 @media (max-width: 768px) {
+    .dashboard-header {
+        padding: 1rem;
+    }
+
     .header-content {
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 1rem;
         align-items: flex-start;
+    }
+
+    .header-left h1 {
+        font-size: 1.25rem;
     }
 
     .header-right {
         width: 100%;
         justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .user-info {
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-right {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .logout-button {
+        width: 100%;
+        text-align: center;
     }
 }

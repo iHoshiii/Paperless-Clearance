@@ -109,7 +109,7 @@
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 .form-group label {
@@ -121,20 +121,27 @@
 
 .form-group input,
 .form-group select {
+    width: 100%;
     padding: 0.875rem 1.25rem;
     border: 1.5px solid var(--border);
     border-radius: 14px;
     font-size: 1rem;
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--text-main);
+    background: rgba(0, 0, 0, 0.25);
+    color: #ffffff;
+    /* Explicitly set to white */
     outline: none;
     transition: var(--transition);
+}
+
+.form-group option {
+    background: #064e3b;
+    color: #ffffff;
 }
 
 .form-group input:focus,
 .form-group select:focus {
     border-color: var(--primary);
-    background: white;
+    background: rgba(0, 0, 0, 0.4);
     box-shadow: 0 0 0 4px var(--primary-light);
 }
 
@@ -188,7 +195,7 @@
     color: var(--primary-hover);
 }
 
-@media (max-width: 520px) {
+@media (max-width: 600px) {
     .login-card {
         padding: 2rem 1.5rem;
         border-radius: 20px;
@@ -205,5 +212,15 @@
 
     .login-header h1 {
         font-size: 2rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .login-header h1 {
+        font-size: 1.75rem;
+    }
+
+    .login-card {
+        padding: 1.5rem 1rem;
     }
 }

@@ -21,8 +21,23 @@
 
 .user-details-pills {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 1.25rem;
+}
+
+@media (max-width: 640px) {
+    .welcome-card {
+        padding: 1.25rem;
+    }
+
+    .welcome-card h2 {
+        font-size: 1.4rem;
+    }
+
+    .welcome-card p {
+        font-size: 0.95rem;
+    }
 }
 
 .detail-pill {
