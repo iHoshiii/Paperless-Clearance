@@ -5,86 +5,6 @@
   flex-direction: column;
 }
 
-.dashboard-header {
-  background: white;
-  padding: 1rem 2rem;
-  border-bottom: 1.5px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-}
-
-.header-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-left h1 {
-  font-size: 1.5rem;
-  margin-bottom: 0.15rem;
-  background: linear-gradient(to right, var(--primary), var(--secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.header-subtitle {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.user-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.user-name {
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: var(--text-main);
-}
-
-.user-role {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--primary);
-  background: var(--primary-light);
-  padding: 2px 8px;
-  border-radius: 6px;
-  margin-top: 2px;
-}
-
-.logout-button {
-  padding: 0.6rem 1.25rem;
-  background: #fef2f2;
-  color: var(--danger);
-  border: 1.5px solid #fee2e2;
-  border-radius: 10px;
-  font-size: 0.875rem;
-  font-weight: 700;
-}
-
-.logout-button:hover {
-  background: var(--danger);
-  color: white;
-  border-color: var(--danger);
-  transform: translateY(-1px);
-}
-
 .dashboard-main {
   flex: 1;
   padding: 2.5rem 2rem;
@@ -93,25 +13,20 @@
   width: 100%;
 }
 
-.welcome-card {
-  background: white;
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: var(--shadow-md);
-  margin-bottom: 2.5rem;
-  border: 1.5px solid var(--border);
-  background-image: radial-gradient(at 100% 0%, var(--primary-light) 0%, transparent 40%);
+.dashboard-content {
+  animation: fadeIn 0.5s ease-out;
 }
 
-.welcome-card h2 {
-  font-size: 1.75rem;
-  margin-bottom: 0.75rem;
-  color: var(--text-main);
-}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 
-.welcome-card p {
-  color: var(--text-secondary);
-  font-size: 1.05rem;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .dashboard-grid {
@@ -120,110 +35,8 @@
   gap: 1.5rem;
 }
 
-.dashboard-card {
-  background: white;
-  border-radius: 18px;
-  padding: 1.75rem;
-  border: 1.5px solid var(--border);
-  transition: var(--transition);
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.dashboard-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: var(--primary);
-  opacity: 0;
-  transition: var(--transition);
-}
-
-.dashboard-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-xl);
-  border-color: var(--primary-light);
-}
-
-.dashboard-card:hover::before {
-  opacity: 1;
-}
-
-.card-icon {
-  font-size: 2.25rem;
-  margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 60px;
-  height: 60px;
-  border-radius: 14px;
-  background: var(--bg-main);
-  border: 1.5px solid var(--border);
-}
-
-.dashboard-card h3 {
-  font-size: 1.25rem;
-  margin-bottom: 0.25rem;
-}
-
-.dashboard-card p {
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-  margin-bottom: 1rem;
-  flex: 1;
-}
-
-.card-button {
-  padding: 0.75rem;
-  background: var(--primary-light);
-  color: var(--primary);
-  border: none;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 0.9rem;
-}
-
-.card-button:hover {
-  background: var(--primary);
-  color: white;
-}
-
-.user-details-pills {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 1rem;
-}
-
-.detail-pill {
-  background: white;
-  padding: 0.4rem 0.8rem;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
-}
-
-.detail-pill strong {
-  color: var(--text-main);
-  margin-left: 0.25rem;
-}
-
 @media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    gap: 1.5rem;
-    align-items: flex-start;
-  }
-
-  .header-right {
-    width: 100%;
-    justify-content: space-between;
+  .dashboard-main {
+    padding: 1.5rem 1rem;
   }
 }
