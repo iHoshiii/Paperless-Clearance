@@ -1,25 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import authService, { AuthResponse } from '../services/auth';
-
-interface User {
-  id: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  role: string;
-  student_id?: string;
-  department?: string;
-  contact_number?: string;
-  is_active: boolean;
-}
-
-interface AuthState {
-  user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
-  loading: boolean;
-  error: string | null;
-}
+import { User, AuthState, UserRole } from '../types/auth';
 
 type AuthAction =
   | { type: 'LOGIN_START' }
@@ -147,10 +128,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       dispatch({ type: 'LOGIN_START' });
       const response = await authService.login({ email, password });
-      
+
       authService.setToken(response.token);
       authService.setUser(response.user);
-      
+
       dispatch({
         type: 'LOGIN_SUCCESS',
         payload: { user: response.user, token: response.token },
@@ -166,10 +147,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       dispatch({ type: 'LOGIN_START' });
       const response = await authService.register(userData);
-      
+
       authService.setToken(response.token);
       authService.setUser(response.user);
-      
+
       dispatch({
         type: 'LOGIN_SUCCESS',
         payload: { user: response.user, token: response.token },

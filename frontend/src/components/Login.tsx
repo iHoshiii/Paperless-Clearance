@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { UserRole } from '../types/auth';
 import './Login.css';
 
 const Login: React.FC = () => {
@@ -9,12 +10,12 @@ const Login: React.FC = () => {
     password: '',
     firstName: '',
     lastName: '',
-    role: 'student',
+    role: UserRole.STUDENT,
     studentId: '',
     department: '',
     contactNumber: '',
   });
-  
+
   const { login, register, loading, error, clearError } = useAuth();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -40,7 +41,7 @@ const Login: React.FC = () => {
           contactNumber: formData.contactNumber || undefined,
         });
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const toggleMode = () => {
