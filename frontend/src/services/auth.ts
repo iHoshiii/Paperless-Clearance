@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { UserRole, User } from '../types/auth';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
@@ -12,7 +13,7 @@ export interface RegisterData {
   password: string;
   firstName: string;
   lastName: string;
-  role: string;
+  role: UserRole;
   studentId?: string;
   department?: string;
   contactNumber?: string;
@@ -21,17 +22,7 @@ export interface RegisterData {
 export interface AuthResponse {
   message: string;
   token: string;
-  user: {
-    id: string;
-    email: string;
-    first_name: string;
-    last_name: string;
-    role: string;
-    student_id?: string;
-    department?: string;
-    contact_number?: string;
-    is_active: boolean;
-  };
+  user: User;
 }
 
 const api = axios.create({
@@ -57,7 +48,7 @@ export const authService = {
     return response.data;
   },
 
-  async verifyToken(): Promise<{ valid: boolean; user: any }> {
+  async verifyToken(): Promise<{ valid: boolean; user: User }> {
     const response = await api.get('/auth/verify');
     return response.data;
   },
@@ -75,12 +66,12 @@ export const authService = {
     localStorage.setItem('token', token);
   },
 
-  getUser(): any | null {
+  getUser(): User | null {
     const userStr = localStorage.getItem('user');
     return userStr ? JSON.parse(userStr) : null;
   },
 
-  setUser(user: any): void {
+  setUser(user: User): void {
     localStorage.setItem('user', JSON.stringify(user));
   },
 

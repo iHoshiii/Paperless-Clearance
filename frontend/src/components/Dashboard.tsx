@@ -1,36 +1,141 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
+import { UserRole } from '../types/auth';
 import './Dashboard.css';
 
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
 
-  const getRoleDisplayName = (role: string) => {
-    const roleNames: { [key: string]: string } = {
-      student: 'Student',
-      sub_organization: 'Sub-Organization',
-      mother_organization: 'Mother Organization',
-      adviser: 'Adviser',
-      ncssc: 'NCSSC',
-      clinic: 'Clinic',
-      sas: 'SAS',
-      admin: 'Administrator'
+  const getRoleDisplayName = (role: UserRole | string) => {
+    const roleNames: Record<string, string> = {
+      [UserRole.STUDENT]: 'Student',
+      [UserRole.SUB_ORGANIZATION]: 'Sub-Organization',
+      [UserRole.MOTHER_ORGANIZATION]: 'Mother Organization',
+      [UserRole.ADVISER]: 'Adviser',
+      [UserRole.NCSSC]: 'NCSSC',
+      [UserRole.CLINIC]: 'Clinic',
+      [UserRole.SAS]: 'SAS',
+      [UserRole.ADMIN]: 'Administrator'
     };
     return roleNames[role] || role;
   };
 
   const getWelcomeMessage = () => {
-    const messages: { [key: string]: string } = {
-      student: 'Welcome to your clearance dashboard',
-      sub_organization: 'Organization Clearance Management',
-      mother_organization: 'Mother Organization Dashboard',
-      adviser: 'Adviser Clearance Portal',
-      ncssc: 'NCSSC Administration',
-      clinic: 'Clinic Clearance System',
-      sas: 'SAS Clearance Portal',
-      admin: 'System Administration'
+    const messages: Record<string, string> = {
+      [UserRole.STUDENT]: 'Manage your clearance requests and track progress',
+      [UserRole.SUB_ORGANIZATION]: 'Organization Clearance Management & Approvals',
+      [UserRole.MOTHER_ORGANIZATION]: 'Monitor and manage department-wide clearances',
+      [UserRole.ADVISER]: 'Review and approve student clearance forms',
+      [UserRole.NCSSC]: 'Strategic Student Services Oversight',
+      [UserRole.CLINIC]: 'Medical Clearance Administration',
+      [UserRole.SAS]: 'Student Affairs & Services Portal',
+      [UserRole.ADMIN]: 'System-wide configuration and user oversight'
     };
     return messages[user?.role || ''] || 'Welcome to Paperless Clearance';
+  };
+
+  const renderDashboardCards = () => {
+    const role = user?.role as UserRole;
+
+    const cards = [
+      {
+        id: 'status',
+        icon: '📋',
+        title: 'Clearance Status',
+        description: 'View and manage your clearance requests',
+        buttonText: 'View Clearances',
+        showFor: [UserRole.STUDENT]
+      },
+      {
+        id: 'documents',
+        icon: '📄',
+        title: 'Documents',
+        description: 'Upload and manage required documents',
+        buttonText: 'Manage Files',
+        showFor: [UserRole.STUDENT]
+      },
+      {
+        id: 'approvals',
+        icon: '✅',
+        title: 'Pending Approvals',
+        description: 'Review and approve clearance requests',
+        buttonText: 'Review Now',
+        showFor: [
+          UserRole.SUB_ORGANIZATION,
+          UserRole.MOTHER_ORGANIZATION,
+          UserRole.ADVISER,
+          UserRole.NCSSC,
+          UserRole.CLINIC,
+          UserRole.SAS,
+          UserRole.ADMIN
+        ]
+      },
+      {
+        id: 'analytics',
+        icon: '📊',
+        title: 'Analytics',
+        description: 'View statistics and clearance reports',
+        buttonText: 'View Reports',
+        showFor: [
+          UserRole.SUB_ORGANIZATION,
+          UserRole.MOTHER_ORGANIZATION,
+          UserRole.NCSSC,
+          UserRole.SAS,
+          UserRole.ADMIN
+        ]
+      },
+      {
+        id: 'users',
+        icon: '👥',
+        title: 'User Management',
+        description: 'Manage institutional users and roles',
+        buttonText: 'Manage Users',
+        showFor: [UserRole.ADMIN, UserRole.NCSSC, UserRole.SAS]
+      },
+      {
+        id: 'clinic-records',
+        icon: '🏥',
+        title: 'Medical Records',
+        description: 'Manage and update student medical clearance',
+        buttonText: 'View Records',
+        showFor: [UserRole.CLINIC, UserRole.ADMIN]
+      },
+      {
+        id: 'sas-services',
+        icon: '🎓',
+        title: 'Student Services',
+        description: 'Oversee SAS-related clearance requirements',
+        buttonText: 'Manage Services',
+        showFor: [UserRole.SAS, UserRole.ADMIN]
+      },
+      {
+        id: 'ncssc-council',
+        icon: '🏛️',
+        title: 'Council Portal',
+        description: 'Coordinate with NCSSC organizational headers',
+        buttonText: 'Open Portal',
+        showFor: [UserRole.NCSSC, UserRole.ADMIN]
+      },
+      {
+        id: 'notifications',
+        icon: '🔔',
+        title: 'Notifications',
+        description: 'Stay updated with latest announcements',
+        buttonText: 'View All',
+        showFor: Object.values(UserRole) as UserRole[]
+      }
+    ];
+
+    return cards
+      .filter(card => card.showFor.includes(role))
+      .map(card => (
+        <div className="dashboard-card" key={card.id}>
+          <div className="card-icon">{card.icon}</div>
+          <h3>{card.title}</h3>
+          <p>{card.description}</p>
+          <button className="card-button">{card.buttonText}</button>
+        </div>
+      ));
   };
 
   return (
@@ -56,70 +161,20 @@ const Dashboard: React.FC = () => {
       <main className="dashboard-main">
         <div className="dashboard-content">
           <div className="welcome-card">
-            <h2>Welcome, {user?.first_name}!</h2>
+            <h2>Welcome Back, {user?.first_name}!</h2>
             <p>You are logged in as a <strong>{getRoleDisplayName(user?.role || '')}</strong></p>
-            {user?.student_id && (
-              <p>Student ID: <strong>{user.student_id}</strong></p>
-            )}
-            {user?.department && (
-              <p>Department: <strong>{user.department}</strong></p>
-            )}
+            <div className="user-details-pills">
+              {user?.student_id && (
+                <span className="detail-pill">ID: <strong>{user.student_id}</strong></span>
+              )}
+              {user?.department && (
+                <span className="detail-pill">Dept: <strong>{user.department}</strong></span>
+              )}
+            </div>
           </div>
 
           <div className="dashboard-grid">
-            <div className="dashboard-card">
-              <div className="card-icon">📋</div>
-              <h3>Clearance Status</h3>
-              <p>View and manage your clearance requests</p>
-              <button className="card-button">View Clearances</button>
-            </div>
-
-            <div className="dashboard-card">
-              <div className="card-icon">📄</div>
-              <h3>Documents</h3>
-              <p>Upload and manage required documents</p>
-              <button className="card-button">Manage Documents</button>
-            </div>
-
-            <div className="dashboard-card">
-              <div className="card-icon">🔔</div>
-              <h3>Notifications</h3>
-              <p>Stay updated with latest notifications</p>
-              <button className="card-button">View Notifications</button>
-            </div>
-
-            {(user?.role === 'adviser' || 
-              user?.role === 'sub_organization' || 
-              user?.role === 'mother_organization' || 
-              user?.role === 'ncssc' || 
-              user?.role === 'clinic' || 
-              user?.role === 'sas' || 
-              user?.role === 'admin') && (
-              <div className="dashboard-card">
-                <div className="card-icon">✅</div>
-                <h3>Pending Approvals</h3>
-                <p>Review and approve clearance requests</p>
-                <button className="card-button">Review Requests</button>
-              </div>
-            )}
-
-            {user?.role === 'admin' && (
-              <>
-                <div className="dashboard-card">
-                  <div className="card-icon">👥</div>
-                  <h3>User Management</h3>
-                  <p>Manage system users and roles</p>
-                  <button className="card-button">Manage Users</button>
-                </div>
-
-                <div className="dashboard-card">
-                  <div className="card-icon">📊</div>
-                  <h3>Reports</h3>
-                  <p>Generate system reports and analytics</p>
-                  <button className="card-button">View Reports</button>
-                </div>
-              </>
-            )}
+            {renderDashboardCards()}
           </div>
         </div>
       </main>
