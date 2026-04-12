@@ -243,3 +243,9 @@ code {
   align-items: center;
   margin-bottom: 1rem;
 }
+/* Status Badges */
+.status-badge { padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+.status-badge.pending { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+.status-badge.approved { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+.status-badge.rejected { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+.status-badge.partially_approved { background: rgba(45, 212, 191, 0.2); color: var(--secondary); }

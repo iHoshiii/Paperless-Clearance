@@ -4,6 +4,21 @@ import { authenticateToken, authorizeRoles, AuthRequest } from '../middleware/au
 
 const router = express.Router();
 
+
+// 0. Get Active Clearance Periods
+router.get('/periods', authenticateToken, async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('clearance_periods')
+            .select('*')
+            .eq('is_active', true);
+        if (error) throw error;
+        res.json(data);
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // 1. Submit a New Clearance Request (Student Only)
 router.post('/request', authenticateToken, authorizeRoles('STUDENT'), async (req: AuthRequest, res) => {
     try {

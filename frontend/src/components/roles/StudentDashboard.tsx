@@ -1,7 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardCard from '../common/DashboardCard';
+import StudentClearanceRequest from '../student/ClearanceRequest';
 
 const StudentDashboard: React.FC = () => {
+    const [view, setView] = useState<'overview' | 'requests'>('overview');
+
+    if (view === 'requests') {
+        return (
+            <div style={{ gridColumn: '1 / -1' }}>
+                <button
+                    className="btn-text"
+                    onClick={() => setView('overview')}
+                    style={{ marginBottom: '1rem', display: 'block' }}
+                >
+                    ← Back to Dashboard
+                </button>
+                <StudentClearanceRequest />
+            </div>
+        );
+    }
+
     return (
         <>
             <DashboardCard
@@ -9,6 +27,7 @@ const StudentDashboard: React.FC = () => {
                 title="Clearance Status"
                 description="View and manage your clearance requests"
                 buttonText="View Clearances"
+                onClick={() => setView('requests')}
             />
             <DashboardCard
                 icon="📄"
