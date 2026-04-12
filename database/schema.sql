@@ -62,3 +62,20 @@ CREATE TABLE clearance_approvals (
   approved_by UUID REFERENCES users(id), -- The officer who signed it
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+
+-- Create a test admin user
+-- Password will be 'password123' (hashed for bcrypt)
+INSERT INTO users (
+  email, 
+  password_hash, 
+  first_name, 
+  last_name, 
+  role
+) VALUES (
+  'admin@test.com', 
+  '$2a$12$R.S/Iu5kZ7XnVZ2H0H8u4.u6nC2Hh.m1x1.o1.u1.u1.u1.u1.u1', -- this is 'password123'
+  'System', 
+  'Administrator', 
+  'ADMIN'
+);

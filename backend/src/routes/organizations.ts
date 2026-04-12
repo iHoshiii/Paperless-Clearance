@@ -1,17 +1,8 @@
 import express from 'express';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
 import { authenticateToken, authorizeRoles } from '../middleware/auth';
 
 const router = express.Router();
-
-if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    console.error('CRITICAL ERROR: Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env');
-}
-
-const supabase = createClient(
-    process.env.SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
 
 // GET all organizations
 // Accessible by any authenticated user

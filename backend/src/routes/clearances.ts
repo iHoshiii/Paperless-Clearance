@@ -1,13 +1,8 @@
 import express from 'express';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
 import { authenticateToken, authorizeRoles, AuthRequest } from '../middleware/auth';
 
 const router = express.Router();
-
-const supabase = createClient(
-    process.env.SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
 
 // 1. Submit a New Clearance Request (Student Only)
 router.post('/request', authenticateToken, authorizeRoles('STUDENT'), async (req: AuthRequest, res) => {
