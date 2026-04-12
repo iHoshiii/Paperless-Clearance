@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import bcrypt from 'bcryptjs';
-import { supabase } from './src/lib/supabase';
+import { supabase } from '../lib/supabase';
 
 async function createAdmin() {
     console.log('--- ADMIN CREATION TOOL ---');
