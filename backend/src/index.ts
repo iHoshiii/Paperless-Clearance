@@ -1,10 +1,10 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 import authRoutes from './routes/auth';
-
-dotenv.config();
+import organizationRoutes from './routes/organizations';
+import clearanceRoutes from './routes/clearances';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,6 +19,8 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/organizations', organizationRoutes);
+app.use('/api/clearances', clearanceRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Paperless Clearance API is running' });
