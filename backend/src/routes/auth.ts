@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { supabase } from '../lib/supabase';
+import { authenticateToken, AuthRequest } from '../middleware/auth';
 
 const router = express.Router();
 
@@ -130,6 +131,67 @@ router.get('/verify', async (req, res) => {
   } catch (error) {
     console.error('Token verification error:', error);
     res.status(401).json({ error: 'Invalid token' });
+  }
+});
+
+router.put('/profile', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const { firstName, lastName } = req.body;
+    const userId = req.user?.userId;
+    console.log('Update Profile Request:', { userId, firstName, lastName });
+
+    const { data, error } = await supabase
+      .from('users')
+      .update({ first_name: firstName, last_name: lastName })
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Supabase Update Error:', error);
+      throw error;
+    }
+    if (!data) {
+      return res.status(404).json({ error: 'User row not found' });
+    }
+    const { password_hash, ...userWithOutPassword } = data;
+    res.json(userWithOutPassword);
+  } catch (error: any) {
+    console.error('Profile Update Catch Error:', error);
+    res.status(500).json({ error: error.message || 'Failed to update profile' });
+  }
+});
+
+router.put('/change-password', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const userId = req.user?.userId;
+
+    const { data: user, error: fetchError } = await supabase
+      .from('users')
+      .select('password_hash')
+      .eq('id', userId)
+      .single();
+
+    if (fetchError || !user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const isValid = await bcrypt.compare(oldPassword, user.password_hash);
+    if (!isValid) {
+      return res.status(401).json({ error: 'Incorrect current password' });
+    }
+
+    const newHash = await bcrypt.hash(newPassword, 12);
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({ password_hash: newHash })
+      .eq('id', userId);
+
+    if (updateError) throw updateError;
+    res.json({ message: 'Password updated successfully' });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
 });
 

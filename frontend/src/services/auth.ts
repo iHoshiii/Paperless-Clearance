@@ -77,6 +77,16 @@ export const authService = {
 
   isAuthenticated(): boolean {
     return !!this.getToken();
+  },
+
+  async updateProfile(data: { firstName: string, lastName: string }): Promise<User> {
+    const response = await api.put('/auth/profile', data);
+    return response.data;
+  },
+
+  async changePassword(oldPassword: string, newPassword: string): Promise<any> {
+    const response = await api.put('/auth/change-password', { oldPassword, newPassword });
+    return response.data;
   }
 };
 

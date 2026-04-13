@@ -4,6 +4,7 @@ import { UserRole } from '../types/auth';
 import { ROLE_WELCOME_MESSAGES, APP_NAME } from '../constants';
 import Header from './common/Header';
 import WelcomeCard from './common/WelcomeCard';
+import UserSettings from './common/UserSettings';
 
 // Role Dashboards
 import StudentDashboard from './roles/StudentDashboard';
@@ -19,12 +20,17 @@ import './Dashboard.css';
 
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
+  const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
 
   const getWelcomeMessage = () => {
     return ROLE_WELCOME_MESSAGES[user?.role || ''] || `Welcome to ${APP_NAME}`;
   };
 
   const renderRoleDashboard = () => {
+    if (isSettingsOpen) {
+      return <UserSettings onClose={() => setIsSettingsOpen(false)} />;
+    }
+
     switch (user?.role) {
       case UserRole.STUDENT:
         return <StudentDashboard />;
@@ -52,6 +58,7 @@ const Dashboard: React.FC = () => {
       <Header
         user={user}
         logout={logout}
+        onSettingsClick={() => setIsSettingsOpen(true)}
         welcomeMessage={getWelcomeMessage()}
       />
 

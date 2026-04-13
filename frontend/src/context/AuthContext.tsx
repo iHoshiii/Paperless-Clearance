@@ -78,6 +78,7 @@ interface AuthContextType {
   register: (userData: any) => Promise<void>;
   logout: () => void;
   clearError: () => void;
+  updateUser: (updatedUser: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -171,12 +172,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     dispatch({ type: 'CLEAR_ERROR' });
   };
 
+  const updateUser = (updatedUser: User) => {
+    authService.setUser(updatedUser);
+    dispatch({
+      type: 'LOGIN_SUCCESS',
+      payload: { user: updatedUser, token: state.token || authService.getToken() || '' },
+    });
+  };
+
   const value: AuthContextType = {
     ...state,
     login,
     register,
     logout,
     clearError,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

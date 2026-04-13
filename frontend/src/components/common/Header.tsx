@@ -6,12 +6,20 @@ import './Header.css';
 interface HeaderProps {
     user: User | null;
     logout: () => void;
+    onSettingsClick: () => void;
     welcomeMessage: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ user, logout, welcomeMessage }) => {
+const Header: React.FC<HeaderProps> = ({ user, logout, onSettingsClick, welcomeMessage }) => {
     const getRoleDisplayName = (role: UserRole | string) => {
         return ROLE_DISPLAY_NAMES[role as UserRole] || role;
+    };
+
+    const handleLogout = () => {
+        const confirmed = window.confirm('Are you sure you want to log out?');
+        if (confirmed) {
+            logout();
+        }
     };
 
     return (
@@ -26,9 +34,14 @@ const Header: React.FC<HeaderProps> = ({ user, logout, welcomeMessage }) => {
                         <span className="user-name">{user?.first_name} {user?.last_name}</span>
                         <span className="user-role">{getRoleDisplayName(user?.role || '')}</span>
                     </div>
-                    <button onClick={logout} className="logout-button">
-                        Logout
-                    </button>
+                    <div className="header-actions">
+                        <button onClick={onSettingsClick} className="settings-button">
+                            ⚙️ Settings
+                        </button>
+                        <button onClick={handleLogout} className="logout-button">
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>

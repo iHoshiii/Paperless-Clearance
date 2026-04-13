@@ -61,14 +61,40 @@
     margin-top: 2px;
 }
 
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.settings-button {
+    padding: 0.6rem 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-main);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.settings-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary);
+    transform: translateY(-1px);
+}
+
 .logout-button {
     padding: 0.6rem 1.25rem;
-    background: #fef2f2;
-    color: var(--danger);
-    border: 1.5px solid #fee2e2;
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
     border-radius: 10px;
     font-size: 0.875rem;
     font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .logout-button:hover {
