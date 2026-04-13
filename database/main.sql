@@ -1,4 +1,4 @@
--- 1. ORGANIZATIONS
+Failed to update profile-- 1. ORGANIZATIONS
 CREATE TABLE organizations (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL,

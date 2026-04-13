@@ -138,6 +138,8 @@ router.put('/profile', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const { firstName, lastName } = req.body;
     const userId = req.user?.userId;
+    const fs = require('fs');
+    fs.appendFileSync('debug.log', `[${new Date().toISOString()}] Update Profile: userId=${userId}, firstName=${firstName}, lastName=${lastName}\n`);
     console.log('Update Profile Request:', { userId, firstName, lastName });
 
     const { data, error } = await supabase
@@ -157,6 +159,8 @@ router.put('/profile', authenticateToken, async (req: AuthRequest, res) => {
     const { password_hash, ...userWithOutPassword } = data;
     res.json(userWithOutPassword);
   } catch (error: any) {
+    const fs = require('fs');
+    fs.appendFileSync('debug.log', `[${new Date().toISOString()}] Profile Error: ${error.message}\n`);
     console.error('Profile Update Catch Error:', error);
     res.status(500).json({ error: error.message || 'Failed to update profile' });
   }
