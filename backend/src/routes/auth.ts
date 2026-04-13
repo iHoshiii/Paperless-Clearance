@@ -136,11 +136,23 @@ router.get('/verify', async (req, res) => {
 
 router.put('/profile', authenticateToken, async (req: AuthRequest, res) => {
   try {
-    const { firstName, lastName } = req.body;
+    const { firstName, lastName, password } = req.body;
     const userId = req.user?.userId;
-    const fs = require('fs');
-    fs.appendFileSync('debug.log', `[${new Date().toISOString()}] Update Profile: userId=${userId}, firstName=${firstName}, lastName=${lastName}\n`);
-    console.log('Update Profile Request:', { userId, firstName, lastName });
+
+    const { data: user, error: fetchError } = await supabase
+      .from('users')
+      .select('password_hash')
+      .eq('id', userId)
+      .single();
+
+    if (fetchError || !user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const isValid = await bcrypt.compare(password, user.password_hash);
+    if (!isValid) {
+      return res.status(401).json({ error: 'Incorrect password' });
+    }
 
     const { data, error } = await supabase
       .from('users')
@@ -149,19 +161,13 @@ router.put('/profile', authenticateToken, async (req: AuthRequest, res) => {
       .select()
       .single();
 
-    if (error) {
-      console.error('Supabase Update Error:', error);
-      throw error;
-    }
+    if (error) throw error;
     if (!data) {
       return res.status(404).json({ error: 'User row not found' });
     }
     const { password_hash, ...userWithOutPassword } = data;
     res.json(userWithOutPassword);
   } catch (error: any) {
-    const fs = require('fs');
-    fs.appendFileSync('debug.log', `[${new Date().toISOString()}] Profile Error: ${error.message}\n`);
-    console.error('Profile Update Catch Error:', error);
     res.status(500).json({ error: error.message || 'Failed to update profile' });
   }
 });

@@ -79,7 +79,7 @@ export const authService = {
     return !!this.getToken();
   },
 
-  async updateProfile(data: { firstName: string, lastName: string }): Promise<User> {
+  async updateProfile(data: { firstName: string, lastName: string, password: string }): Promise<User> {
     const response = await api.put('/auth/profile', data);
     return response.data;
   },
