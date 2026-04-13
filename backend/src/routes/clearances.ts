@@ -66,7 +66,14 @@ router.post('/request', authenticateToken, authorizeRoles('STUDENT'), async (req
             return res.status(400).json({ error: 'Clearance period is required' });
         }
 
-        // Check if a request already exists for this period
+        // Fetch student's department to determine specific requirements
+        const { data: student } = await supabase
+            .from('users')
+            .select('department_id')
+            .eq('id', student_id)
+            .single();
+
+        // Check for existing request
         const { data: existing } = await supabase
             .from('clearance_requests')
             .select('id')
@@ -78,7 +85,7 @@ router.post('/request', authenticateToken, authorizeRoles('STUDENT'), async (req
             return res.status(400).json({ error: 'You already have a request for this period' });
         }
 
-        // Create the main request
+        // Create main request
         const { data: request, error: reqError } = await supabase
             .from('clearance_requests')
             .insert({ student_id, period_id, status: 'pending' })
@@ -87,13 +94,30 @@ router.post('/request', authenticateToken, authorizeRoles('STUDENT'), async (req
 
         if (reqError) throw reqError;
 
-        // Automatically create approval steps for all organizations
-        const { data: organizations } = await supabase.from('organizations').select('id');
+        // Fetch requirements based on student's department or general requirements
+        // If student has no department, only look for department_id is null
+        const reqQuery = supabase.from('clearance_requirements').select('organization_id');
+        if (student?.department_id) {
+            reqQuery.or(`department_id.eq.${student.department_id},department_id.is.null`);
+        } else {
+            reqQuery.is('department_id', null);
+        }
 
-        if (organizations && organizations.length > 0) {
-            const approvalSteps = organizations.map(org => ({
+        const { data: requirements } = await reqQuery;
+
+        // Fallback: If no requirements are defined, use all organizations
+        let orgIds: string[] = [];
+        if (requirements && requirements.length > 0) {
+            orgIds = requirements.map(r => r.organization_id);
+        } else {
+            const { data: allOrgs } = await supabase.from('organizations').select('id');
+            orgIds = allOrgs?.map(o => o.id) || [];
+        }
+
+        if (orgIds.length > 0) {
+            const approvalSteps = orgIds.map(orgId => ({
                 request_id: request.id,
-                organization_id: org.id,
+                organization_id: orgId,
                 status: 'pending'
             }));
 
@@ -103,6 +127,14 @@ router.post('/request', authenticateToken, authorizeRoles('STUDENT'), async (req
 
             if (appError) throw appError;
         }
+
+        // Create a notification for the student
+        await supabase.from('notifications').insert({
+            user_id: student_id,
+            title: 'Clearance Requested',
+            message: 'Your clearance request has been submitted and is pending approvals.',
+            type: 'INFO'
+        });
 
         res.status(201).json({ message: 'Clearance request submitted successfully', request });
     } catch (error: any) {
@@ -187,10 +219,31 @@ router.post('/approve/:approvalId', authenticateToken, async (req: AuthRequest, 
                 updated_at: new Date().toISOString()
             })
             .eq('id', req.params.approvalId)
-            .select()
+            .select(`
+                *,
+                organization:organizations(name),
+                request:clearance_requests(student_id)
+            `)
             .single();
 
         if (error) throw error;
+
+        // Send notification to the student
+        await supabase.from('notifications').insert({
+            user_id: data.request.student_id,
+            title: `Clearance Update: ${data.organization.name}`,
+            message: `Your clearance request was ${status} by ${data.organization.name}.${remarks ? ' Remarks: ' + remarks : ''}`,
+            type: status === 'approved' ? 'APPROVAL' : 'REJECTION'
+        });
+
+        // Log to Audit Trail
+        await supabase.from('audit_logs').insert({
+            user_id: approverId,
+            action: `ORG_${status.toUpperCase()}`,
+            entity_type: 'CLEARANCE_APPROVAL',
+            entity_id: data.id,
+            details: { status, remarks, org_name: data.organization.name }
+        });
 
         // Automatically update the main request status
         await checkAndUpdateRequestStatus(data.request_id);
