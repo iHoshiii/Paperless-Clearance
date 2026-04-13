@@ -65,6 +65,19 @@ CREATE TABLE clearance_approvals (
 
 
 -- Create a test admin user
+
+-- 6. DOCUMENTS
+-- Files uploaded by students for their clearance requests
+CREATE TABLE documents (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  request_id UUID REFERENCES clearance_requests(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  file_url TEXT NOT NULL,
+  file_type TEXT,
+  status TEXT DEFAULT 'pending', -- 'pending', 'verified', 'rejected'
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Password will be 'password123' (hashed for bcrypt)
 INSERT INTO users (
   email, 

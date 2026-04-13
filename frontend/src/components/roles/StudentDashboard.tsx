@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import DashboardCard from '../common/DashboardCard';
 import StudentClearanceRequest from '../student/ClearanceRequest';
+import DocumentManager from '../student/DocumentManager';
 
 const StudentDashboard: React.FC = () => {
-    const [view, setView] = useState<'overview' | 'requests'>('overview');
+    const [view, setView] = useState<'overview' | 'requests' | 'documents'>('overview');
 
     if (view === 'requests') {
         return (
@@ -16,6 +17,21 @@ const StudentDashboard: React.FC = () => {
                     ← Back to Dashboard
                 </button>
                 <StudentClearanceRequest />
+            </div>
+        );
+    }
+
+    if (view === 'documents') {
+        return (
+            <div style={{ gridColumn: '1 / -1' }}>
+                <button
+                    className="btn-text"
+                    onClick={() => setView('overview')}
+                    style={{ marginBottom: '1rem', display: 'block' }}
+                >
+                    ← Back to Dashboard
+                </button>
+                <DocumentManager />
             </div>
         );
     }
@@ -34,6 +50,7 @@ const StudentDashboard: React.FC = () => {
                 title="Documents"
                 description="Upload and manage required documents"
                 buttonText="Manage Files"
+                onClick={() => setView('documents')}
             />
             <DashboardCard
                 icon="🔔"

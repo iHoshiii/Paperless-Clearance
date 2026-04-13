@@ -5,13 +5,50 @@ import { authenticateToken, authorizeRoles, AuthRequest } from '../middleware/au
 const router = express.Router();
 
 
-// 0. Get Active Clearance Periods
-router.get('/periods', authenticateToken, async (req, res) => {
+// 0. Get Clearance Periods
+router.get('/periods', authenticateToken, async (req: AuthRequest, res) => {
     try {
+        const query = supabase.from('clearance_periods').select('*');
+
+        // Non-admins only see active periods
+        if (req.user?.role !== 'admin') {
+            query.eq('is_active', true);
+        }
+
+        const { data, error } = await query;
+        if (error) throw error;
+        res.json(data);
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 0.1 Create a Period (Admin Only)
+router.post('/periods', authenticateToken, authorizeRoles('admin'), async (req, res) => {
+    try {
+        const { name, start_date, end_date } = req.body;
         const { data, error } = await supabase
             .from('clearance_periods')
-            .select('*')
-            .eq('is_active', true);
+            .insert({ name, start_date, end_date, is_active: true })
+            .select()
+            .single();
+        if (error) throw error;
+        res.status(201).json(data);
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// 0.2 Update/Toggle a Period (Admin Only)
+router.put('/periods/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
+    try {
+        const { is_active, name } = req.body;
+        const { data, error } = await supabase
+            .from('clearance_periods')
+            .update({ is_active, name })
+            .eq('id', req.params.id)
+            .select()
+            .single();
         if (error) throw error;
         res.json(data);
     } catch (error: any) {
@@ -155,13 +192,49 @@ router.post('/approve/:approvalId', authenticateToken, async (req: AuthRequest, 
 
         if (error) throw error;
 
-        // Logic to check if all steps are now approved to update the main request status
-        // ... (This could be a separate helper function)
+        // Automatically update the main request status
+        await checkAndUpdateRequestStatus(data.request_id);
 
         res.json({ message: `Clearance ${status} successfully`, data });
     } catch (error: any) {
         res.status(500).json({ error: error.message });
     }
 });
+
+/**
+ * Helper to update the main clearance_request status based on its individual approvals
+ */
+async function checkAndUpdateRequestStatus(requestId: string) {
+    try {
+        const { data: approvals, error } = await supabase
+            .from('clearance_approvals')
+            .select('status')
+            .eq('request_id', requestId);
+
+        if (error) throw error;
+
+        let newStatus: 'pending' | 'partially_approved' | 'approved' | 'rejected' = 'pending';
+
+        const total = approvals.length;
+        const approvedCount = approvals.filter(a => a.status === 'approved').length;
+        const rejectedCount = approvals.filter(a => a.status === 'rejected').length;
+
+        if (rejectedCount > 0) {
+            newStatus = 'rejected'; // If one rejects, usually the whole thing is stuck/rejected
+        } else if (approvedCount === total && total > 0) {
+            newStatus = 'approved';
+        } else if (approvedCount > 0) {
+            newStatus = 'partially_approved';
+        }
+
+        await supabase
+            .from('clearance_requests')
+            .update({ status: newStatus })
+            .eq('id', requestId);
+
+    } catch (err) {
+        console.error('Failed to update overall status:', err);
+    }
+}
 
 export default router;
