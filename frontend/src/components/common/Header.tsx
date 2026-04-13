@@ -32,6 +32,7 @@ const Header: React.FC<HeaderProps> = ({ user, logout, onSettingsClick, welcomeM
                 <div className="header-right">
                     <div className="user-info">
                         <span className="user-name">{user?.first_name} {user?.last_name}</span>
+                        {user?.student_id && <span className="user-id">ID: {user.student_id}</span>}
                         <span className="user-role">{getRoleDisplayName(user?.role || '')}</span>
                     </div>
                     <div className="header-actions">

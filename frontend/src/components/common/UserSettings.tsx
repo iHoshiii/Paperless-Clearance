@@ -9,6 +9,7 @@ const UserSettings: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     const [firstName, setFirstName] = useState(user?.first_name || '');
     const [lastName, setLastName] = useState(user?.last_name || '');
+    const [studentId, setStudentId] = useState(user?.student_id || '');
     const [currentPassword, setCurrentPassword] = useState('');
 
     const [newPassword, setNewPassword] = useState('');
@@ -27,6 +28,7 @@ const UserSettings: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             const updatedUser = await authService.updateProfile({
                 firstName,
                 lastName,
+                studentId,
                 password: currentPassword
             });
             updateUser(updatedUser);
@@ -139,6 +141,10 @@ const UserSettings: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                             <label style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Last Name</label>
                             <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} className="form-control" required style={{ width: '100%' }} />
                         </div>
+                    </div>
+                    <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                        <label style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>ID Number</label>
+                        <input type="text" value={studentId} onChange={e => setStudentId(e.target.value)} className="form-control" placeholder="Enter your ID number" style={{ width: '100%' }} />
                     </div>
                     <div className="form-group" style={{ marginBottom: '2rem' }}>
                         <label style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Verify Current Password</label>

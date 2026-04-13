@@ -136,7 +136,7 @@ router.get('/verify', async (req, res) => {
 
 router.put('/profile', authenticateToken, async (req: AuthRequest, res) => {
   try {
-    const { firstName, lastName, password } = req.body;
+    const { firstName, lastName, studentId, password } = req.body;
     const userId = req.user?.userId;
 
     const { data: user, error: fetchError } = await supabase
@@ -156,7 +156,11 @@ router.put('/profile', authenticateToken, async (req: AuthRequest, res) => {
 
     const { data, error } = await supabase
       .from('users')
-      .update({ first_name: firstName, last_name: lastName })
+      .update({
+        first_name: firstName,
+        last_name: lastName,
+        student_id: studentId
+      })
       .eq('id', userId)
       .select()
       .single();

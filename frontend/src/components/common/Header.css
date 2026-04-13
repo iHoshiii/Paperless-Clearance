@@ -49,6 +49,13 @@
     color: var(--text-main);
 }
 
+.user-id {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-family: monospace;
+    margin: 2px 0;
+}
+
 .user-role {
     font-size: 0.75rem;
     font-weight: 600;
