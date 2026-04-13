@@ -101,4 +101,41 @@ router.delete('/:id', authenticateToken, authorizeRoles('ADMIN'), async (req, re
     }
 });
 
+// GET organization stats (approvals counts)
+router.get('/stats', authenticateToken, async (req: any, res) => {
+    try {
+        const userId = req.user?.userId;
+
+        // Find the organization the user belongs to
+        const { data: user, error: userError } = await supabase
+            .from('users')
+            .select('organization_id')
+            .eq('id', userId)
+            .single();
+
+        if (userError || !user?.organization_id) {
+            return res.status(403).json({ error: 'User is not assigned to an organization' });
+        }
+
+        const { data: approvals, error: appError } = await supabase
+            .from('clearance_approvals')
+            .select('status')
+            .eq('organization_id', user.organization_id);
+
+        if (appError) throw appError;
+
+        const stats = {
+            total: approvals.length,
+            approved: approvals.filter(a => a.status === 'approved').length,
+            pending: approvals.filter(a => a.status === 'pending').length,
+            rejected: approvals.filter(a => a.status === 'rejected').length
+        };
+
+        res.json(stats);
+    } catch (error: any) {
+        console.error('Error fetching org stats:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 export default router;

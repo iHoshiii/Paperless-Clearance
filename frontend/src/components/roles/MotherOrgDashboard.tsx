@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import DashboardCard from '../common/DashboardCard';
 import OfficerApprovalQueue from '../common/OfficerApprovalQueue';
+import OrgAnalytics from '../common/OrgAnalytics';
+import RecentNotifications from '../common/RecentNotifications';
 
 const MotherOrgDashboard: React.FC = () => {
-    const [view, setView] = useState<'overview' | 'approvals'>('overview');
+    const [view, setView] = useState<'overview' | 'approvals' | 'analytics' | 'notifications'>('overview');
 
-    if (view === 'approvals') {
+    if (view !== 'overview') {
         return (
             <div style={{ gridColumn: '1 / -1' }}>
                 <button
@@ -15,7 +17,9 @@ const MotherOrgDashboard: React.FC = () => {
                 >
                     ← Back to Dashboard
                 </button>
-                <OfficerApprovalQueue />
+                {view === 'approvals' && <OfficerApprovalQueue />}
+                {view === 'analytics' && <OrgAnalytics />}
+                {view === 'notifications' && <RecentNotifications />}
             </div>
         );
     }
@@ -34,12 +38,14 @@ const MotherOrgDashboard: React.FC = () => {
                 title="Analytics"
                 description="View statistics and clearance reports"
                 buttonText="View Reports"
+                onClick={() => setView('analytics')}
             />
             <DashboardCard
                 icon="🔔"
                 title="Notifications"
                 description="Stay updated with latest announcements"
                 buttonText="View All"
+                onClick={() => setView('notifications')}
             />
         </>
     );
