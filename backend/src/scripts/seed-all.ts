@@ -32,16 +32,16 @@ async function seedAll() {
                 email: 'admin@test.com',
                 first_name: 'System',
                 last_name: 'Administrator',
-                role: 'ADMIN',
+                role: 'admin',
                 organization_id: null,
                 student_id: null,
             },
-            // Mother Organization (no specific org, they manage all)
+            // Mother Organization
             {
                 email: 'motherorg@test.com',
                 first_name: 'Mother',
                 last_name: 'Organization',
-                role: 'MOTHER_ORG',
+                role: 'mother_organization',
                 organization_id: null,
                 student_id: null,
             },
@@ -50,19 +50,37 @@ async function seedAll() {
                 email: 'student@test.com',
                 first_name: 'Juan',
                 last_name: 'dela Cruz',
-                role: 'STUDENT',
+                role: 'student',
                 organization_id: null,
                 student_id: '2024-00001',
             },
-            // One officer per organization
-            ...orgs.map(org => ({
-                email: `officer.${org.code?.toLowerCase() || org.id.slice(0, 4)}@test.com`,
-                first_name: org.name,
+            // Clinic Officer → role: 'clinic'
+            ...orgs.filter(o => o.code === 'CLINIC').map(org => ({
+                email: `officer.clinic@test.com`,
+                first_name: 'Clinic',
                 last_name: 'Officer',
-                role: 'OFFICER',
+                role: 'clinic',
                 organization_id: org.id,
                 student_id: null,
-            }))
+            })),
+            // SAS Officer → role: 'sas'
+            ...orgs.filter(o => o.code === 'SAS').map(org => ({
+                email: `officer.sas@test.com`,
+                first_name: 'SAS',
+                last_name: 'Officer',
+                role: 'sas',
+                organization_id: org.id,
+                student_id: null,
+            })),
+            // All other orgs → role: 'sub_organization'
+            ...orgs.filter(o => !['CLINIC', 'SAS'].includes(o.code || '')).map(org => ({
+                email: `officer.${org.code?.toLowerCase()}@test.com`,
+                first_name: org.name,
+                last_name: 'Officer',
+                role: 'sub_organization',
+                organization_id: org.id,
+                student_id: null,
+            })),
         ];
 
         // ── 3. Delete and re-insert all accounts ──────────────────────
